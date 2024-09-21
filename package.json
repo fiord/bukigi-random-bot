@@ -1,0 +1,34 @@
+{
+  "name": "bukigi-random-bot",
+  "description": "登録されているブキ擬からランダムに選ぶよ",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "ngrok": "ngrok http 8787",
+    "lint": "eslint --fix '**/*.ts'",
+    "register": "tsx src/register.ts",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "eslint": "^9.11.0",
+    "ngrok": "^5.0.0-beta.2",
+    "wrangler": "^3.78.6"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.6.0",
+    "@typescript-eslint/parser": "^8.6.0",
+    "discord-interactions": "^4.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "itty-router": "^5.0.18",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.6.0"
+  }
+}
