@@ -1,4 +1,4 @@
-import { RANDOM_COMMAND } from "./commands";
+import { RANDOM_COMMAND, PING_COMMAND } from "./commands";
 import dotenv from 'dotenv';
 import process from 'node:process';
 
@@ -20,7 +20,7 @@ const response: Response = await fetch(url, {
         Authorization: `Bot ${token}`,
     },
     method: 'PUT',
-    body: JSON.stringify([RANDOM_COMMAND]),
+    body: JSON.stringify([RANDOM_COMMAND, PING_COMMAND]),
 });
 
 if (response.ok) {

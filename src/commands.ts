@@ -1,4 +1,10 @@
+export const PING_COMMAND = {
+    name: 'bukigi-random-ping',
+    description: 'ping',
+};
+
 export const RANDOM_COMMAND = {
-    name: 'bukigi-random',
-    description: 'ランダムにブキ擬を出すよ',
+    name: 'bukigi-random-register',
+    description: 'ブキ擬を登録するよ',
+    modal_id: 'bukigi-random-register-modal'
 };

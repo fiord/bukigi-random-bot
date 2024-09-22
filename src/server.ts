@@ -4,7 +4,13 @@ import {
     InteractionType,
     verifyKey,
 } from "discord-interactions";
-import { RANDOM_COMMAND } from "./commands";
+import { PING_COMMAND, RANDOM_COMMAND } from "./commands";
+import {
+    BukigiRandomRegisterModal,
+    BukigiRandomRegisterResponseType,
+    BukigiRandomRegister,
+} from "./controllers/bukigi-register";
+import { ErrorWithStatus } from "./utils/ErrorResponseType";
 
 class JsonResponse extends Response {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,33 +38,69 @@ router.post('/', async (req, env) => {
         return new Response(`Bad request signature`, { status: 401 });
     }
 
-    switch (interaction.type) {
-        case InteractionType.PING:
-            // PING message is used during the initial webhook handshake.
-            return new JsonResponse({
-                type: InteractionResponseType.PONG,
-            });
-            break;
-        case InteractionType.APPLICATION_COMMAND:
-            switch (interaction.data.name.toLowerCase()) {
-                case RANDOM_COMMAND.name.toLowerCase(): {
-                    const v: number = Math.floor(Math.random() * 10);
-                    return new JsonResponse({
-                        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-                        data: {
-                            content: v,
-                        }
-                    });
+    try {
+        switch (interaction.type) {
+            case InteractionType.PING:
+                // PING message is used during the initial webhook handshake.
+                return new JsonResponse({
+                    type: InteractionResponseType.PONG,
+                });
+                break;
+
+            // slash commands
+            case InteractionType.APPLICATION_COMMAND:
+                switch (interaction.data.name.toLowerCase()) {
+                    // ping
+                    case PING_COMMAND.name.toLowerCase():
+                        return new JsonResponse({
+                            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                            data: {
+                                content: 'ラクトだよ～',
+                            }
+                        });
+                        break;
+
+                    // bukigi-random-register
+                    case RANDOM_COMMAND.name.toLowerCase(): {
+                        return new JsonResponse(BukigiRandomRegisterModal());
+                    }
+
+                    default:
+                        console.error(`Unsupported commands: ${interaction.data.name.toLowerCase()}`);
+                        throw new ErrorWithStatus("Unsupported command", 400);
                 }
-                default:
-                    console.error(`Unsupported commands: ${interaction.data.name.toLowerCase()}`);
+
+            // modal submission
+            case InteractionType.MODAL_SUBMIT: {
+                const modalId: string = interaction.data.custom_id;
+                if (modalId === RANDOM_COMMAND.modal_id) {
+                    const response = await BukigiRandomRegister(interaction);
+                    if (response instanceof BukigiRandomRegisterResponseType) {
+                        return new JsonResponse(await BukigiRandomRegister)
+                    }
+                    return new JsonResponse(await BukigiRandomRegister(interaction));
+                } else {
+                    throw new ErrorWithStatus(`Unsupported modal id: ${modalId}`, 400);
+                }
             }
-            break;
-        default:
-            console.error(`Unknown interaction type: ${interaction.type}`);
+            default:
+                console.error(`Unknown interaction type: ${interaction.type}`);
+                throw new ErrorWithStatus("Unknown type", 400);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+        if (err instanceof ErrorWithStatus) {
+            // if there is not status field, return default as 200(HTTP OK).
             return new JsonResponse({
-                error: `Unknown type`,
-            }, { status: 400 });
+                error: err.message,
+            }, { status: err.status || 200 });
+        }
+        else {
+            console.log(err);
+            return new JsonResponse({
+                error: "Internal Server Error",
+            }, { status: 500 });
+        }
     }
 });
 
