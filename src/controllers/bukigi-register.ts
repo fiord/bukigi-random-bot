@@ -4,8 +4,11 @@ import {
     ActionRow,
 } from "discord-interactions";
 
-import { RANDOM_COMMAND } from "../commands";
+import { RANDOM_REGISTER_COMMAND } from "../commands";
 import { ErrorWithStatus } from "../utils/ErrorResponseType";
+import { Bukigi } from "../models/bukigi";
+import { registerBukigi } from "../repository/d1";
+import { D1Database } from "@cloudflare/workers-types";
 
 export class BukigiRandomRegisterType {
     type: number;
@@ -20,7 +23,7 @@ export const BukigiRandomRegisterModal: () => (BukigiRandomRegisterType) = () =>
     return {
         type: InteractionResponseType.MODAL,
         data: {
-            custom_id: RANDOM_COMMAND.modal_id,
+            custom_id: RANDOM_REGISTER_COMMAND.modal_id,
             title: 'ブキ擬を登録してね',
             components: [
                 {
@@ -58,33 +61,68 @@ export class BukigiRandomRegisterResponseType {
     data: {
         content: string;
     };
+    error?: ErrorWithStatus;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BukigiRandomRegister: (interaction: any) => Promise<BukigiRandomRegisterResponseType> = async (interaction) => {
+export const BukigiRandomRegister: (interaction: any, db: D1Database) => Promise<BukigiRandomRegisterResponseType> = async (interaction, db) => {
     // should be in the guild(server)
     if (!interaction.guild_id) {
         console.log("guild_id is not specified");
-        throw new ErrorWithStatus("対象のサーバの中で実行してね！", 400);
+        return {
+            type: -1,
+            data: {
+                content: "",
+            },
+            error: new ErrorWithStatus("対象のサーバの中で実行してね！", 100),
+        };
     }
 
-    console.log(interaction);
-    const formValues = new Map<string, string>();
     let responseString: string = "以下の内容を登録したよ！";
 
-    responseString += `\nguild_id: ${interaction.guild_id}`;
-    responseString += `\nuser_id: ${interaction.member.user.id}`;
+    const newBukigi = Bukigi.emptyBukigi();
+    newBukigi.guild_id = interaction.guild_id;
+    newBukigi.user_id = interaction.member.user.id;
 
     // read form contents
     for (const form of interaction.data.components) {
-        formValues.set(form.components[0].custom_id, form.components[0].value);
         responseString += `\n${form.components[0].custom_id}: ${form.components[0].value}`;
+        switch (form.components[0].custom_id) {
+            case 'name':
+                newBukigi.name = form.components[0].value;
+                break;
+            case 'url':
+                newBukigi.url = form.components[0].value;
+                break;
+            default:
+                console.error(`Unknown custom_id: ${form.components[0].custom_id}`);
+                return {
+                    type: -1,
+                    data: {
+                        content: "",
+                    },
+                    error: new ErrorWithStatus("不正な custom_idが見つかりました", 101),
+                };
+        }
     }
 
-    return {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-            content: responseString,
+    // save to database
+    const response = await registerBukigi(db, newBukigi);
+    console.log(response);
+    if (response > 0) {
+        return {
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+                content: responseString,
+            }
+        };
+    } else {
+        return {
+            type: -1,
+            data: {
+                content: "",
+            },
+            error: new ErrorWithStatus("ブキ擬の登録に失敗しちゃった...名前被ってないか list コマンドで見てみて！", 102),
         }
-    };
+    }
 }

@@ -16,9 +16,10 @@
     "dotenv": "^16.4.5",
     "eslint": "^9.11.0",
     "ngrok": "^5.0.0-beta.2",
-    "wrangler": "^3.78.6"
+    "wrangler": "^3.78.9"
   },
   "dependencies": {
+    "@cloudflare/workers-types": "^4.20240919.0",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "@typescript-eslint/parser": "^8.6.0",
     "discord-interactions": "^4.1.0",
