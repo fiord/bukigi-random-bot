@@ -1,4 +1,9 @@
-import { PING_COMMAND, RANDOM_REGISTER_COMMAND, RANDOM_SHOW_COMMAND } from "./commands";
+import {
+    BUKIGI_RANDOM_COMMAND,
+    PING_COMMAND,
+    RANDOM_REGISTER_COMMAND,
+    RANDOM_SHOW_COMMAND,
+} from "./commands";
 import dotenv from 'dotenv';
 import process from 'node:process';
 
@@ -20,7 +25,12 @@ const response: Response = await fetch(url, {
         Authorization: `Bot ${token}`,
     },
     method: 'PUT',
-    body: JSON.stringify([RANDOM_REGISTER_COMMAND, RANDOM_SHOW_COMMAND, PING_COMMAND]),
+    body: JSON.stringify([
+        RANDOM_REGISTER_COMMAND,
+        RANDOM_SHOW_COMMAND,
+        BUKIGI_RANDOM_COMMAND,
+        PING_COMMAND,
+    ]),
 });
 
 if (response.ok) {

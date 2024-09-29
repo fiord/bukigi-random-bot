@@ -12,7 +12,7 @@ export class BukigiRandomShowResponseType {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BukigiRandomShow: (interaction: any, db: D1Database) => Promise<BukigiRandomShowResponseType> = async (interaction, db) => {
+export const BukigiRandomShow: (interaction: any, db: D1Database, token: string) => Promise<BukigiRandomShowResponseType> = async (interaction, db) => {
     // should be in the guild(server)
     if (!interaction.guild_id) {
         console.log("guild_id is not specified");
@@ -32,10 +32,8 @@ export const BukigiRandomShow: (interaction: any, db: D1Database) => Promise<Buk
 
     let response = "登録されている君のブキ擬の一覧だよ！";
     for (const bukigi of bukigis) {
-        response += `\n${bukigi.name} : ${bukigi.url}`;
+        response += `\n${bukigi.name}: ${bukigi.url}`
     }
-
-    console.log(response);
 
     return {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

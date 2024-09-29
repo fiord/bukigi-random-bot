@@ -4,7 +4,12 @@ import {
     InteractionType,
     verifyKey,
 } from "discord-interactions";
-import { PING_COMMAND, RANDOM_REGISTER_COMMAND, RANDOM_SHOW_COMMAND } from "../commands";
+import {
+    RANDOM_REGISTER_COMMAND,
+    RANDOM_SHOW_COMMAND,
+    BUKIGI_RANDOM_COMMAND,
+    PING_COMMAND,
+} from "../commands";
 import {
     BukigiRandomRegisterModal,
     BukigiRandomRegister,
@@ -12,6 +17,7 @@ import {
 import { ErrorWithStatus } from "../utils/ErrorResponseType";
 import { D1Database } from "@cloudflare/workers-types";
 import { BukigiRandomShow } from "./bukigi-show";
+import { BukigiRandom } from "./bukigi-random";
 
 class JsonResponse extends Response {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -85,7 +91,16 @@ export const mainRouter: RequestHandler<IRequest, [env: any]> = async (req, env)
 
                     // bukigi-random-show
                     case RANDOM_SHOW_COMMAND.name.toLowerCase(): {
-                        const response = await BukigiRandomShow(interaction, db);
+                        const response = await BukigiRandomShow(interaction, db, env.DISCORD_TOKEN);
+                        if (response.error) {
+                            throw response.error;
+                        }
+                        return new JsonResponse(response);
+                    }
+
+                    // bukigi-random
+                    case BUKIGI_RANDOM_COMMAND.name.toLowerCase(): {
+                        const response = await BukigiRandom(interaction, db, env.DISCORD_TOKEN);
                         if (response.error) {
                             throw response.error;
                         }
