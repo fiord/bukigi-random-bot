@@ -17,7 +17,7 @@ export class Embed {
     constructor(title: string, url: string, description: string, color: number, imageUrl?: string) {
         this.title = title;
         this.url = url;
-        this.type = "rich";
+        this.type = 'rich';
         this.description = description;
         this.color = color;
         if (imageUrl != null) {
@@ -50,7 +50,7 @@ export const getUrlContent: (url: string, token: string, title: string) => Promi
             url,
             json.content,
             0x0099ff,
-            json.attachments[0]?.url ?? "",
+            json.attachments[0]?.url ?? '',
         ),
     ];
 

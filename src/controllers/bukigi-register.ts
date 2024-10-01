@@ -2,13 +2,13 @@ import {
     InteractionResponseType,
     MessageComponentTypes,
     ActionRow,
-} from "discord-interactions";
+} from 'discord-interactions';
 
-import { BUKIGI_MANAGER_COMMAND } from "../commands";
-import { ErrorWithStatus } from "../utils/ErrorResponseType";
-import { Bukigi } from "../models/bukigi";
-import { registerBukigi } from "../repository/d1";
-import { D1Database } from "@cloudflare/workers-types";
+import { BUKIGI_MANAGER_COMMAND } from '../commands';
+import { ErrorWithStatus } from '../utils/ErrorResponseType';
+import { Bukigi } from '../models/bukigi';
+import { registerBukigi } from '../repository/d1';
+import { D1Database } from '@cloudflare/workers-types';
 
 export class BukigiRegisterModalResponseType {
     type: number;
@@ -68,17 +68,17 @@ export class BukigiRegisterResponseType {
 export const BukigiRegister: (interaction: any, db: D1Database) => Promise<BukigiRegisterResponseType> = async (interaction, db) => {
     // should be in the guild(server)
     if (!interaction.guild_id) {
-        console.log("guild_id is not specified");
+        console.log('guild_id is not specified');
         return {
             type: -1,
             data: {
-                content: "",
+                content: '',
             },
-            error: new ErrorWithStatus("対象のサーバの中で実行してね！", 100),
+            error: new ErrorWithStatus('対象のサーバの中で実行してね！', 100),
         };
     }
 
-    let responseString: string = "以下の内容を登録したよ！";
+    let responseString: string = '以下の内容を登録したよ！';
 
     const newBukigi = Bukigi.emptyBukigi();
     newBukigi.guild_id = interaction.guild_id;
@@ -99,9 +99,9 @@ export const BukigiRegister: (interaction: any, db: D1Database) => Promise<Bukig
                 return {
                     type: -1,
                     data: {
-                        content: "",
+                        content: '',
                     },
-                    error: new ErrorWithStatus("不正な custom_idが見つかりました", 101),
+                    error: new ErrorWithStatus('不正な custom_idが見つかりました', 101),
                 };
         }
     }
@@ -120,9 +120,9 @@ export const BukigiRegister: (interaction: any, db: D1Database) => Promise<Bukig
         return {
             type: -1,
             data: {
-                content: "",
+                content: '',
             },
-            error: new ErrorWithStatus("ブキ擬の登録に失敗しちゃった...名前被ってないか list コマンドで見てみて！", 102),
+            error: new ErrorWithStatus('ブキ擬の登録に失敗しちゃった...名前被ってないか list コマンドで見てみて！', 102),
         }
     }
 }

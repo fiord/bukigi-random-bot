@@ -1,9 +1,9 @@
-import { D1Database } from "@cloudflare/workers-types";
-import { ActionRow, InteractionResponseType, MessageComponentTypes } from "discord-interactions";
-import { ErrorWithStatus } from "../utils/ErrorResponseType";
-import { BUKIGI_MANAGER_COMMAND } from "../commands";
-import { getBukigi, updateBukigi } from "../repository/d1";
-import { Bukigi } from "../models/bukigi";
+import { D1Database } from '@cloudflare/workers-types';
+import { ActionRow, InteractionResponseType, MessageComponentTypes } from 'discord-interactions';
+import { ErrorWithStatus } from '../utils/ErrorResponseType';
+import { BUKIGI_MANAGER_COMMAND } from '../commands';
+import { getBukigi, updateBukigi } from '../repository/d1';
+import { Bukigi } from '../models/bukigi';
 
 export class BukigiUpdateModalResponseType {
     type: number;
@@ -19,24 +19,24 @@ export class BukigiUpdateModalResponseType {
 export const BukigiUpdateModal: (interaction: any, db: D1Database, options: any) => Promise<BukigiUpdateModalResponseType> = async (interaction, db, options) => {
     // should be in the guild(server)
     if (!interaction.guild_id) {
-        console.log("guild_id is not specified");
+        console.log('guild_id is not specified');
         return {
             type: -1,
             data: {
-                custom_id: "",
-                title: "",
+                custom_id: '',
+                title: '',
                 components: [],
             },
-            error: new ErrorWithStatus("対象のサーバの中で実行してね！", 100),
+            error: new ErrorWithStatus('対象のサーバの中で実行してね！', 100),
         };
     }
 
     const guild_id: number = interaction.guild_id;
     const user_id: number = interaction.member.user.id;
 
-    let name = "";
+    let name = '';
     for (const option of options) {
-        if (option.name === "name") {
+        if (option.name === 'name') {
             name = option.value;
             break;
         }
@@ -47,11 +47,11 @@ export const BukigiUpdateModal: (interaction: any, db: D1Database, options: any)
         return {
             type: -1,
             data: {
-                custom_id: "",
-                title: "",
+                custom_id: '',
+                title: '',
                 components: [],
             },
-            error: new ErrorWithStatus("僕そのブキ擬まだ知らない...名前間違えてないかな？", 104),
+            error: new ErrorWithStatus('僕そのブキ擬まだ知らない...名前間違えてないかな？', 104),
         }
     }
 
@@ -59,7 +59,7 @@ export const BukigiUpdateModal: (interaction: any, db: D1Database, options: any)
         type: InteractionResponseType.MODAL,
         data: {
             custom_id: `${BUKIGI_MANAGER_COMMAND.update_modal_id}-${bukigi.name}`,
-            title: `ブキ擬の更新をしてね`,
+            title: 'ブキ擬の更新をしてね',
             components: [
                 {
                     // Text inputs must be inside of an action component
@@ -108,13 +108,13 @@ export class BukigiUpdateRespnseType {
 export const BukigiUpdate: (interaction: any, db: D1Database, oldName: string) => Promise<BukigiUpdateRespnseType> = async (interaction, db, oldName) => {
     // should be in the guild(server)
     if (!interaction.guild_id) {
-        console.log("guild_id is not specified");
+        console.log('guild_id is not specified');
         return {
             type: -1,
             data: {
-                content: "",
+                content: '',
             },
-            error: new ErrorWithStatus("対象のサーバの中で実行してね！", 100),
+            error: new ErrorWithStatus('対象のサーバの中で実行してね！', 100),
         };
     }
 
@@ -126,13 +126,13 @@ export const BukigiUpdate: (interaction: any, db: D1Database, oldName: string) =
         return {
             type: -1,
             data: {
-                content: "",
+                content: '',
             },
-            error: new ErrorWithStatus("僕更新元のブキ擬まだ知らない...何か間違えてないかな？", 104),
+            error: new ErrorWithStatus('僕更新元のブキ擬まだ知らない...何か間違えてないかな？', 104),
         }
     }
 
-    const newBukigi = new Bukigi(guild_id, user_id, "", "");
+    const newBukigi = new Bukigi(guild_id, user_id, '', '');
     for (const form of interaction.data.components) {
         switch (form.components[0].custom_id) {
             case 'name':
@@ -146,16 +146,16 @@ export const BukigiUpdate: (interaction: any, db: D1Database, oldName: string) =
                 return {
                     type: -1,
                     data: {
-                        content: "",
+                        content: '',
                     },
-                    error: new ErrorWithStatus("不正な custom_idが見つかりました", 101),
+                    error: new ErrorWithStatus('不正な custom_idが見つかりました', 101),
                 };
         }
     }
 
     const res = await updateBukigi(db, oldBukigi, newBukigi);
     if (res > 0) {
-        let message = "ブキ擬の更新をしたよ！\n";
+        let message = 'ブキ擬の更新をしたよ！\n';
         message += `** 名前 **: ${oldBukigi.name} :allow_right: ${newBukigi.name}\n`;
         message += `** リンク **: ${oldBukigi.url} :allow_right: ${oldBukigi.url}`;
         return {
@@ -168,9 +168,9 @@ export const BukigiUpdate: (interaction: any, db: D1Database, oldName: string) =
         return {
             type: -1,
             data: {
-                content: "",
+                content: '',
             },
-            error: new ErrorWithStatus("ブキ擬の更新に失敗しちゃった...", 105)
+            error: new ErrorWithStatus('ブキ擬の更新に失敗しちゃった...', 105)
         };
     }
 };

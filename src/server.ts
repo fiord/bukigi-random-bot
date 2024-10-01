@@ -1,5 +1,5 @@
-import { AutoRouter } from "itty-router";
-import { mainRouter } from "./controllers";
+import { AutoRouter } from 'itty-router';
+import { mainRouter } from './controllers';
 
 const router = AutoRouter();
 
@@ -10,7 +10,7 @@ router.get('/', (_, env) => {
 
 router.post('/', mainRouter);
 
-router.all("*", () => new Response(`Not Found`, { status: 404 }));
+router.all('*', () => new Response('Not Found', { status: 404 }));
 
 const server = {
     fetch: router.fetch,

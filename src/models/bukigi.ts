@@ -12,6 +12,6 @@ export class Bukigi {
     };
 
     static emptyBukigi() {
-        return new Bukigi(0, 0, "", "");
+        return new Bukigi(0, 0, '', '');
     }
 };

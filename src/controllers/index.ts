@@ -1,24 +1,24 @@
-import { IRequest, RequestHandler } from "itty-router";
+import { IRequest, RequestHandler } from 'itty-router';
 import {
     InteractionResponseType,
     InteractionType,
     verifyKey,
-} from "discord-interactions";
+} from 'discord-interactions';
 import {
     BUKIGI_MANAGER_COMMAND,
     BUKIGI_RANDOM_COMMAND,
     PING_COMMAND,
-} from "../commands";
+} from '../commands';
 import {
     BukigiRegisterModal,
     BukigiRegister,
-} from "../controllers/bukigi-register";
-import { ErrorWithStatus } from "../utils/ErrorResponseType";
-import { D1Database } from "@cloudflare/workers-types";
-import { BukigiList } from "./bukigi-list";
-import { BukigiRandom } from "./bukigi-random";
-import { BukigiUpdate, BukigiUpdateModal } from "./bukigi-update";
-import { BukigiDelete } from "./bukigi-delete";
+} from '../controllers/bukigi-register';
+import { ErrorWithStatus } from '../utils/ErrorResponseType';
+import { D1Database } from '@cloudflare/workers-types';
+import { BukigiList } from './bukigi-list';
+import { BukigiRandom } from './bukigi-random';
+import { BukigiUpdate, BukigiUpdateModal } from './bukigi-update';
+import { BukigiDelete } from './bukigi-delete';
 
 class JsonResponse extends Response {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,7 +57,7 @@ const verifyDiscordRequest = async (req: IRequest, env: any) => {
 export const mainRouter: RequestHandler<IRequest, [env: any]> = async (req, env) => {
     const { isValid, interaction } = await verifyDiscordRequest(req, env);
     if (!isValid || !interaction) {
-        return new Response(`Bad request signature`, { status: 401 });
+        return new Response('Bad request signature', { status: 401 });
     }
 
     const db: D1Database = env.DB;
@@ -117,7 +117,7 @@ export const mainRouter: RequestHandler<IRequest, [env: any]> = async (req, env)
 
                             default:
                                 console.error(`Unsupported subcommand ${subCommand}`);
-                                throw new ErrorWithStatus("僕そのコマンド知らない...", -4);
+                                throw new ErrorWithStatus('僕そのコマンド知らない...', -4);
                         }
                     }
 
@@ -132,7 +132,7 @@ export const mainRouter: RequestHandler<IRequest, [env: any]> = async (req, env)
 
                     default:
                         console.error(`Unsupported commands: ${interaction.data.name.toLowerCase()}`);
-                        throw new ErrorWithStatus("僕そのコマンド知らない...", -2);
+                        throw new ErrorWithStatus('僕そのコマンド知らない...', -2);
                 }
 
             // modal submission
@@ -160,13 +160,13 @@ export const mainRouter: RequestHandler<IRequest, [env: any]> = async (req, env)
 
                 else {
                     console.log(`unsupported modal: ${modalId}`);
-                    throw new ErrorWithStatus(`僕そのコマンド知らない...`, -3);
+                    throw new ErrorWithStatus('僕そのコマンド知らない...', -3);
                 }
             }
 
             default:
                 console.error(`Unknown interaction type: ${interaction.type}`);
-                throw new ErrorWithStatus("僕そのコマンド知らない...", -1);
+                throw new ErrorWithStatus('僕そのコマンド知らない...', -1);
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -182,7 +182,7 @@ export const mainRouter: RequestHandler<IRequest, [env: any]> = async (req, env)
         else {
             console.log(err);
             return new JsonResponse({
-                error: "Internal Server Error",
+                error: 'Internal Server Error',
             }, { status: 500 });
         }
     }

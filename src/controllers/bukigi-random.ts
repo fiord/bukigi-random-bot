@@ -1,11 +1,11 @@
-import { D1Database } from "@cloudflare/workers-types";
-import { sample } from "lodash";
-import { ErrorWithStatus } from "../utils/ErrorResponseType";
-import { listUserBukigi } from "../repository/d1";
-import { BUKIGI_MANAGER_COMMAND } from "../commands";
-import { InteractionResponseType } from "discord-interactions";
-import { Bukigi } from "../models/bukigi";
-import { Embed, getUrlContent } from "../utils/urlValidator";
+import { D1Database } from '@cloudflare/workers-types';
+import { sample } from 'lodash';
+import { ErrorWithStatus } from '../utils/ErrorResponseType';
+import { listUserBukigi } from '../repository/d1';
+import { BUKIGI_MANAGER_COMMAND } from '../commands';
+import { InteractionResponseType } from 'discord-interactions';
+import { Bukigi } from '../models/bukigi';
+import { Embed, getUrlContent } from '../utils/urlValidator';
 
 export class BukigiRandomResponseType {
     type: number;
@@ -20,13 +20,13 @@ export class BukigiRandomResponseType {
 export const BukigiRandom: (interaction: any, db: D1Database, token: string) => Promise<BukigiRandomResponseType> = async (interaction, db, token) => {
     // should be in the guild
     if (!interaction.guild_id) {
-        console.log("guild_id is not specified");
+        console.log('guild_id is not specified');
         return {
             type: -1,
             data: {
-                content: "",
+                content: '',
             },
-            error: new ErrorWithStatus("対象のサーバの中で実行してね！", 100),
+            error: new ErrorWithStatus('対象のサーバの中で実行してね！', 100),
         };
     }
 
@@ -36,11 +36,11 @@ export const BukigiRandom: (interaction: any, db: D1Database, token: string) => 
     const bukigis = await listUserBukigi(db, guild_id, user_id);
 
     if (bukigis.length === 0) {
-        console.log("No bukigi found for the user");
+        console.log('No bukigi found for the user');
         return {
             type: -1,
             data: {
-                content: "",
+                content: '',
             },
             error: new ErrorWithStatus(`君のブキ擬、まだ僕知らないんだ... ${BUKIGI_MANAGER_COMMAND.name} で教えてね！`, 103),
         };
