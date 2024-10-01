@@ -1,7 +1,7 @@
 import {
     BUKIGI_MANAGER_COMMAND,
     BUKIGI_RANDOM_COMMAND,
-    PING_COMMAND,
+    // PING_COMMAND,
 } from './commands';
 import dotenv from 'dotenv';
 import process from 'node:process';
