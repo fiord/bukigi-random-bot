@@ -3,7 +3,7 @@ import { ErrorWithStatus } from "../utils/ErrorResponseType";
 import { listUserBukigi } from "../repository/d1";
 import { InteractionResponseType } from "discord-interactions";
 
-export class BukigiRandomShowResponseType {
+export class BukigiListResponseType {
     type: number;
     data: {
         content: string;
@@ -12,7 +12,7 @@ export class BukigiRandomShowResponseType {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BukigiRandomShow: (interaction: any, db: D1Database, token: string) => Promise<BukigiRandomShowResponseType> = async (interaction, db) => {
+export const BukigiList: (interaction: any, db: D1Database, token: string) => Promise<BukigiListResponseType> = async (interaction, db) => {
     // should be in the guild(server)
     if (!interaction.guild_id) {
         console.log("guild_id is not specified");

@@ -5,19 +5,20 @@ import {
     verifyKey,
 } from "discord-interactions";
 import {
-    RANDOM_REGISTER_COMMAND,
-    RANDOM_SHOW_COMMAND,
+    BUKIGI_MANAGER_COMMAND,
     BUKIGI_RANDOM_COMMAND,
     PING_COMMAND,
 } from "../commands";
 import {
-    BukigiRandomRegisterModal,
-    BukigiRandomRegister,
+    BukigiRegisterModal,
+    BukigiRegister,
 } from "../controllers/bukigi-register";
 import { ErrorWithStatus } from "../utils/ErrorResponseType";
 import { D1Database } from "@cloudflare/workers-types";
-import { BukigiRandomShow } from "./bukigi-show";
+import { BukigiList } from "./bukigi-list";
 import { BukigiRandom } from "./bukigi-random";
+import { BukigiUpdate, BukigiUpdateModal } from "./bukigi-update";
+import { BukigiDelete } from "./bukigi-delete";
 
 class JsonResponse extends Response {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,6 +73,7 @@ export const mainRouter: RequestHandler<IRequest, [env: any]> = async (req, env)
 
             // slash commands
             case InteractionType.APPLICATION_COMMAND:
+                console.log(interaction.data);
                 switch (interaction.data.name.toLowerCase()) {
                     // ping
                     case PING_COMMAND.name.toLowerCase():
@@ -83,19 +85,40 @@ export const mainRouter: RequestHandler<IRequest, [env: any]> = async (req, env)
                         });
                         break;
 
-                    // bukigi-random-register
-                    case RANDOM_REGISTER_COMMAND.name.toLowerCase(): {
-                        const response = BukigiRandomRegisterModal();
-                        return new JsonResponse(response);
-                    }
+                    // bukigi-manager
+                    case BUKIGI_MANAGER_COMMAND.name.toLowerCase(): {
+                        const subCommand = interaction.data.options[0];
+                        switch (subCommand.name.toLowerCase()) {
+                            case 'list': {
+                                const response = await BukigiList(interaction, db, env.DISCORD_TOKEN);
+                                if (response.error) {
+                                    throw response.error;
+                                }
+                                return new JsonResponse(response);
+                            }
+                            case 'register': {
+                                const response = BukigiRegisterModal();
+                                return new JsonResponse(response);
+                            }
+                            case 'update': {
+                                const response = await BukigiUpdateModal(interaction, db, interaction.data.options[0].options);
+                                if (response.error) {
+                                    throw response.error;
+                                }
+                                return new JsonResponse(response);
+                            }
+                            case 'delete': {
+                                const response = await BukigiDelete(interaction, db, interaction.data.options[0].options);
+                                if (response.error) {
+                                    throw response.error;
+                                }
+                                return new JsonResponse(response);
+                            }
 
-                    // bukigi-random-show
-                    case RANDOM_SHOW_COMMAND.name.toLowerCase(): {
-                        const response = await BukigiRandomShow(interaction, db, env.DISCORD_TOKEN);
-                        if (response.error) {
-                            throw response.error;
+                            default:
+                                console.error(`Unsupported subcommand ${subCommand}`);
+                                throw new ErrorWithStatus("僕そのコマンド知らない...", -4);
                         }
-                        return new JsonResponse(response);
                     }
 
                     // bukigi-random
@@ -114,14 +137,28 @@ export const mainRouter: RequestHandler<IRequest, [env: any]> = async (req, env)
 
             // modal submission
             case InteractionType.MODAL_SUBMIT: {
+                console.log(JSON.stringify(interaction.data));
                 const modalId: string = interaction.data.custom_id;
-                if (modalId === RANDOM_REGISTER_COMMAND.modal_id) {
-                    const response = await BukigiRandomRegister(interaction, db);
+                // register
+                if (modalId === BUKIGI_MANAGER_COMMAND.register_modal_id) {
+                    const response = await BukigiRegister(interaction, db);
                     if (response.error) {
                         throw response.error;
                     }
                     return new JsonResponse(response);
-                } else {
+                }
+                // update
+                else if (modalId.startsWith(BUKIGI_MANAGER_COMMAND.update_modal_id)) {
+                    // bukigi-manager-update-modal-${bukigi.name}
+                    const oldName = modalId.substring(BUKIGI_MANAGER_COMMAND.update_modal_id.length + 1);
+                    const response = await BukigiUpdate(interaction, db, oldName);
+                    if (response.error) {
+                        throw response.error;
+                    }
+                    return new JsonResponse(response);
+                }
+
+                else {
                     console.log(`unsupported modal: ${modalId}`);
                     throw new ErrorWithStatus(`僕そのコマンド知らない...`, -3);
                 }

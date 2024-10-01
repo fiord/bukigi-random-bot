@@ -1,8 +1,7 @@
 import {
+    BUKIGI_MANAGER_COMMAND,
     BUKIGI_RANDOM_COMMAND,
     PING_COMMAND,
-    RANDOM_REGISTER_COMMAND,
-    RANDOM_SHOW_COMMAND,
 } from "./commands";
 import dotenv from 'dotenv';
 import process from 'node:process';
@@ -26,8 +25,7 @@ const response: Response = await fetch(url, {
     },
     method: 'PUT',
     body: JSON.stringify([
-        RANDOM_REGISTER_COMMAND,
-        RANDOM_SHOW_COMMAND,
+        BUKIGI_MANAGER_COMMAND,
         BUKIGI_RANDOM_COMMAND,
         PING_COMMAND,
     ]),

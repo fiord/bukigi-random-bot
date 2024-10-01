@@ -4,13 +4,13 @@ import {
     ActionRow,
 } from "discord-interactions";
 
-import { RANDOM_REGISTER_COMMAND } from "../commands";
+import { BUKIGI_MANAGER_COMMAND } from "../commands";
 import { ErrorWithStatus } from "../utils/ErrorResponseType";
 import { Bukigi } from "../models/bukigi";
 import { registerBukigi } from "../repository/d1";
 import { D1Database } from "@cloudflare/workers-types";
 
-export class BukigiRandomRegisterType {
+export class BukigiRegisterModalResponseType {
     type: number;
     data: {
         custom_id: string;
@@ -19,11 +19,11 @@ export class BukigiRandomRegisterType {
     };
 };
 
-export const BukigiRandomRegisterModal: () => (BukigiRandomRegisterType) = () => {
+export const BukigiRegisterModal: () => (BukigiRegisterModalResponseType) = () => {
     return {
         type: InteractionResponseType.MODAL,
         data: {
-            custom_id: RANDOM_REGISTER_COMMAND.modal_id,
+            custom_id: BUKIGI_MANAGER_COMMAND.register_modal_id,
             title: 'ブキ擬を登録してね',
             components: [
                 {
@@ -47,7 +47,7 @@ export const BukigiRandomRegisterModal: () => (BukigiRandomRegisterType) = () =>
                             type: MessageComponentTypes.INPUT_TEXT,
                             custom_id: 'url',
                             style: 1,
-                            label: 'メッセージリンク（名前と一緒に出すよ）',
+                            label: 'メッセージリンク（名前と一緒に出すよ。画像は最初の1枚だけ表示されるよ）',
                         },
                     ],
                 },
@@ -56,7 +56,7 @@ export const BukigiRandomRegisterModal: () => (BukigiRandomRegisterType) = () =>
     };
 };
 
-export class BukigiRandomRegisterResponseType {
+export class BukigiRegisterResponseType {
     type: number;
     data: {
         content: string;
@@ -65,7 +65,7 @@ export class BukigiRandomRegisterResponseType {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const BukigiRandomRegister: (interaction: any, db: D1Database) => Promise<BukigiRandomRegisterResponseType> = async (interaction, db) => {
+export const BukigiRegister: (interaction: any, db: D1Database) => Promise<BukigiRegisterResponseType> = async (interaction, db) => {
     // should be in the guild(server)
     if (!interaction.guild_id) {
         console.log("guild_id is not specified");

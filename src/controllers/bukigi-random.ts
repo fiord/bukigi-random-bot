@@ -2,7 +2,7 @@ import { D1Database } from "@cloudflare/workers-types";
 import { sample } from "lodash";
 import { ErrorWithStatus } from "../utils/ErrorResponseType";
 import { listUserBukigi } from "../repository/d1";
-import { RANDOM_REGISTER_COMMAND } from "../commands";
+import { BUKIGI_MANAGER_COMMAND } from "../commands";
 import { InteractionResponseType } from "discord-interactions";
 import { Bukigi } from "../models/bukigi";
 import { Embed, getUrlContent } from "../utils/urlValidator";
@@ -42,7 +42,7 @@ export const BukigiRandom: (interaction: any, db: D1Database, token: string) => 
             data: {
                 content: "",
             },
-            error: new ErrorWithStatus(`君のブキ擬、まだ僕知らないんだ... ${RANDOM_REGISTER_COMMAND.name} で教えてね！`, 103),
+            error: new ErrorWithStatus(`君のブキ擬、まだ僕知らないんだ... ${BUKIGI_MANAGER_COMMAND.name} で教えてね！`, 103),
         };
     }
 
@@ -54,7 +54,7 @@ export const BukigiRandom: (interaction: any, db: D1Database, token: string) => 
     return {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-            content: `${bukigi.name} です！`,
+            content: `${bukigi.name} です！: ${bukigi.url}`,
             embeds: embeds,
         },
     };
