@@ -156,8 +156,8 @@ export const BukigiUpdate: (interaction: any, db: D1Database, oldName: string) =
     const res = await updateBukigi(db, oldBukigi, newBukigi);
     if (res > 0) {
         let message = 'ブキ擬の更新をしたよ！\n';
-        message += `** 名前 **: ${oldBukigi.name} :allow_right: ${newBukigi.name}\n`;
-        message += `** リンク **: ${oldBukigi.url} :allow_right: ${oldBukigi.url}`;
+        message += `** 名前 **: ${oldBukigi.name} → ${newBukigi.name}\n`;
+        message += `** リンク **: ${oldBukigi.url} → ${oldBukigi.url}`;
         return {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {

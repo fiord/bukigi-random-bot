@@ -27,7 +27,7 @@ const response: Response = await fetch(url, {
     body: JSON.stringify([
         BUKIGI_MANAGER_COMMAND,
         BUKIGI_RANDOM_COMMAND,
-        PING_COMMAND,
+        // PING_COMMAND,
     ]),
 });
 
